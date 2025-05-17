@@ -9,6 +9,7 @@ describe ActiveObject do
 
     it { assert_equal "Cormen's algorithm book - 2nd edition", subject.name }
     it { assert subject.has_name? }
+    it { refute subject.has_price? }
   end
 end
 
