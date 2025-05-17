@@ -1,5 +1,5 @@
 require 'minitest/autorun'
-require_relative '../active_object'
+require_relative '../lib/active_object'
 require 'active_support/inflector'
 
 describe ActiveObject do
