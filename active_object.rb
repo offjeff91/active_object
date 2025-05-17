@@ -16,10 +16,26 @@ class ActiveObject
       else
         false
       end
+    elsif method =~ /^(first|last)_(.+)$/
+      operation = $1
+      attribute = $2
+      if self[attribute.pluralize].is_a?(Array)
+        array = data[attribute.pluralize.to_sym] || data[attribute.pluralize.to_s]
+        array.send(operation)
+      else
+        super(method, *args)
+      end
+    elsif method =~ /^(.+)_(at)$/
+      attribute = $1
+      if self[attribute.pluralize].is_a?(Array)
+        self[attribute.pluralize][args.first.to_i]
+      else
+        super(method, *args)
+      end
     elsif method =~ /^([a-z]+)_(.+)$/
       operation = $1
       attribute = $2
-      value = data[attribute.to_sym] || data[attribute.to_s]
+      value = self[attribute]
       if value.is_a?(Array) && value.respond_to?(operation)
         value.send(operation)
       else
@@ -28,5 +44,9 @@ class ActiveObject
     else
       super(method, *args)
     end
+  end
+
+  def [](attribute)
+    data[attribute.to_sym] || data[attribute.to_s]
   end
 end
