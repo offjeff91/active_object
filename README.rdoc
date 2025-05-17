@@ -1,2 +1,65 @@
-bundle install
-ruby -Ilib:test test/active_object_test.rb
+= ActiveObject
+
+A prototype gem that converts hash data into objects with dynamic methods and computations, similar to ActiveModel/ActiveRecord patterns.
+
+== Description
+
+ActiveObject is a lightweight library that transforms hash data into objects with dynamic method definitions. It provides a simple way to work with structured data by converting hash keys into object methods and adding some useful computations.
+
+== Installation
+
+    bundle install
+
+== Usage
+
+Create an ActiveObject instance by passing a hash:
+
+    data = {
+      name: "Algorithm book",
+      authors: ["John", "Maria", "Jeff"],
+      price: 49.99
+    }
+    
+    book = ActiveObject.new(data)
+
+Now you can access the data through methods:
+
+    book.name     # => "Algorithm book"
+    book.count_authors  # 3
+    book.price    # => 49.99
+
+The object also provides predicate methods to check attribute existence:
+
+    book.has_name?     # => true
+    book.has_price?    # => true
+    book.has_isbn?     # => false
+
+== Running Tests
+
+    ruby -Ilib:test test/active_object_test.rb
+
+== Features
+
+* Dynamic method generation from hash keys
+* Support for both symbol and string keys
+* Predicate methods for attribute checking
+* Simple and lightweight implementation
+
+== Example
+
+    data = {
+      name: "Algorithm book",
+      authors: ["John", "Maria", "Jeff"],
+      price: 49.99,
+      metadata: {
+        isbn: "123-456-789",
+        pages: 500
+      }
+    }
+    
+    book = ActiveObject.new(data)
+    
+    book.name                    # => "Algorithm book"
+    book.authors                 # => ["John", "Maria", "Jeff"]
+    book.has_metadata?          # => true
+    book.has_isbn?              # => false
