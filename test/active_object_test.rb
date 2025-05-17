@@ -8,6 +8,7 @@ describe ActiveObject do
     let(:data) { { name: "Cormen's algorithm book - 2nd edition" } }
 
     it { assert_equal "Cormen's algorithm book - 2nd edition", subject.name }
+    it { assert subject.has_name? }
   end
 end
 
