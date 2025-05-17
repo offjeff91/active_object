@@ -33,10 +33,12 @@ describe ActiveObject do
         it { assert_equal 4, subject.count_recommended_prices }
         it { assert_equal 359.5, subject.sum_recommended_prices }
         it { assert_equal [ 59.5, 80.0, 100.0, 120.0 ], subject.sort_recommended_prices }
+        it { assert_equal 89.875, subject.average_recommended_price }
         it { assert subject.has_name? }
         it { refute subject.has_price? }
         it { assert_raises(NoMethodError) { subject.has_methods? } }
         it { assert_raises(NoMethodError) { subject.test_author } }
+        it { assert_raises(NoMethodError) { subject.first_name } }
       end
     end
   end

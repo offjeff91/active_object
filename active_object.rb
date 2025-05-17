@@ -25,6 +25,12 @@ class ActiveObject
       else
         super(method, *args)
       end
+    elsif method =~ /^(average)_(.+)$/
+      attribute = $2
+      if self[attribute.pluralize].is_a?(Array)
+        array = self[attribute.pluralize]
+        array.sum * 1.0 / array.count 
+      end
     elsif method =~ /^(.+)_(at)$/
       attribute = $1
       if self[attribute.pluralize].is_a?(Array)
