@@ -4,7 +4,7 @@ A prototype gem that converts hash data into objects with dynamic methods and co
 
 == Description
 
-ActiveObject is a lightweight library that transforms hash data into objects with dynamic method definitions. It provides a simple way to work with structured data by converting hash keys into object methods and adding some useful computations.
+ActiveObject is a lightweight library that transforms hash data into objects with dynamic method definitions. It provides a simple way to work with structured data by converting hash keys into object methods and adding useful computations and array operations.
 
 == Installation
 
@@ -28,26 +28,37 @@ Now you can access the data through methods:
     book.authors  # => ["John", "Maria", "Jeff"]
     book.prices   # => [100.0, 80.0, 59.5, 120.0]
 
-== Computations
+== Array Operations
 
-The object provides several computation methods for array attributes:
+The object provides several operations for array attributes:
 
-    book.count_authors           # => 3
-    book.sum_prices             # => 359.5
-    book.average_prices         # => 89.875
-    book.min_prices             # => 59.5
-    book.max_prices             # => 120.0
+=== Basic Array Operations
+    book.first_author           # => "John"
+    book.last_author           # => "Jeff"
+    book.author_at(1)          # => "Maria"
+    book.count_authors         # => 3
+    book.sum_prices            # => 359.5
+    book.sort_prices           # => [59.5, 80.0, 100.0, 120.0]
+
+=== Statistical Operations
+    book.average_prices        # => 89.875
+    book.min_prices            # => 59.5
+    book.max_prices            # => 120.0
 
 Available operations:
+* first_* - Returns the first element of an array
+* last_* - Returns the last element of an array
+* *_at(n) - Returns the nth element of an array (0-based index)
 * count_* - Returns the size of an array
 * sum_* - Returns the sum of array elements
+* sort_* - Returns a sorted array
 * average_* - Returns the average of array elements
 * min_* - Returns the minimum value
 * max_* - Returns the maximum value
 
 == Predicate Methods
 
-The object also provides predicate methods to check attribute existence:
+The object provides predicate methods to check attribute existence:
 
     book.has_name?     # => true
     book.has_price?    # => true
@@ -62,7 +73,8 @@ The object also provides predicate methods to check attribute existence:
 * Dynamic method generation from hash keys
 * Support for both symbol and string keys
 * Predicate methods for attribute checking
-* Array computations (sum, count, average, min, max)
+* Array operations (first, last, at, count, sum, sort)
+* Statistical computations (average, min, max)
 * Simple and lightweight implementation
 
 == Example
@@ -79,9 +91,22 @@ The object also provides predicate methods to check attribute existence:
     
     book = ActiveObject.new(data)
     
+    # Basic attribute access
     book.name                    # => "Algorithm book"
     book.authors                 # => ["John", "Maria", "Jeff"]
+    
+    # Array operations
+    book.first_author           # => "John"
+    book.last_author            # => "Jeff"
+    book.author_at(1)           # => "Maria"
     book.count_authors          # => 3
+    
+    # Statistical operations
     book.sum_prices             # => 359.5
+    book.average_prices         # => 89.875
+    book.min_prices             # => 59.5
+    book.max_prices             # => 120.0
+    
+    # Predicate methods
     book.has_metadata?          # => true
     book.has_isbn?              # => false
