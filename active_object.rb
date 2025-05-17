@@ -4,14 +4,13 @@ class ActiveObject
     @data = data
     data.each do |key, value|
       self.class.define_method(key) { value }
+      self.class.define_method("has_#{key}?") { true }
     end
   end
   def method_missing(method, *args)
     if method =~ /^has_(.+)\?$/
       suffix = $1
-      if data.key?(suffix.to_sym) || data.key?(suffix.to_s)
-        true
-      elsif self.respond_to?(suffix.to_sym)
+      if self.respond_to?(suffix.to_sym)
         super(method, *args)
       else
         false
