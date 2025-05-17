@@ -1,0 +1,2 @@
+bundle install
+ruby -Ilib:test test/active_object_test.rb
