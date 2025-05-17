@@ -17,7 +17,7 @@ Create an ActiveObject instance by passing a hash:
     data = {
       name: "Algorithm book",
       authors: ["John", "Maria", "Jeff"],
-      price: 49.99
+      prices: [100.0, 80.0, 59.5, 120.0]
     }
     
     book = ActiveObject.new(data)
@@ -25,8 +25,27 @@ Create an ActiveObject instance by passing a hash:
 Now you can access the data through methods:
 
     book.name     # => "Algorithm book"
-    book.count_authors  # 3
-    book.price    # => 49.99
+    book.authors  # => ["John", "Maria", "Jeff"]
+    book.prices   # => [100.0, 80.0, 59.5, 120.0]
+
+== Computations
+
+The object provides several computation methods for array attributes:
+
+    book.count_authors           # => 3
+    book.sum_prices             # => 359.5
+    book.average_prices         # => 89.875
+    book.min_prices             # => 59.5
+    book.max_prices             # => 120.0
+
+Available operations:
+* count_* - Returns the size of an array
+* sum_* - Returns the sum of array elements
+* average_* - Returns the average of array elements
+* min_* - Returns the minimum value
+* max_* - Returns the maximum value
+
+== Predicate Methods
 
 The object also provides predicate methods to check attribute existence:
 
@@ -43,6 +62,7 @@ The object also provides predicate methods to check attribute existence:
 * Dynamic method generation from hash keys
 * Support for both symbol and string keys
 * Predicate methods for attribute checking
+* Array computations (sum, count, average, min, max)
 * Simple and lightweight implementation
 
 == Example
@@ -50,7 +70,7 @@ The object also provides predicate methods to check attribute existence:
     data = {
       name: "Algorithm book",
       authors: ["John", "Maria", "Jeff"],
-      price: 49.99,
+      prices: [100.0, 80.0, 59.5, 120.0],
       metadata: {
         isbn: "123-456-789",
         pages: 500
@@ -61,5 +81,7 @@ The object also provides predicate methods to check attribute existence:
     
     book.name                    # => "Algorithm book"
     book.authors                 # => ["John", "Maria", "Jeff"]
+    book.count_authors          # => 3
+    book.sum_prices             # => 359.5
     book.has_metadata?          # => true
     book.has_isbn?              # => false

@@ -4,9 +4,6 @@ class ActiveObject
     @data = data
     data.each do |key, value|
       self.class.define_method(key) { value }
-      if value.is_a?(Array)
-        self.class.define_method("count_#{key}") { value.count }
-      end
     end
   end
   def method_missing(method, *args)
@@ -18,6 +15,15 @@ class ActiveObject
         super(method, *args)
       else
         false
+      end
+    elsif method =~ /^([a-z]+)_(.+)$/
+      operation = $1
+      attribute = $2
+      value = data[attribute.to_sym] || data[attribute.to_s]
+      if value.is_a?(Array) && value.respond_to?(operation)
+        value.send(operation)
+      else
+        super(method, *args)
       end
     else
       super(method, *args)
