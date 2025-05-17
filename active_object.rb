@@ -31,6 +31,13 @@ class ActiveObject
         array = self[attribute.pluralize]
         array.sum * 1.0 / array.count 
       end
+    elsif method =~ /^(max|min)_(.+)$/
+      operation = $1
+      attribute = $2
+      if self[attribute.pluralize].is_a?(Array)
+        array = self[attribute.pluralize]
+        array.send(operation)
+      end
     elsif method =~ /^(.+)_(at)$/
       attribute = $1
       if self[attribute.pluralize].is_a?(Array)
