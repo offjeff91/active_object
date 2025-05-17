@@ -8,57 +8,121 @@ class ActiveObject
     end
   end
   def method_missing(method, *args)
-    if method =~ /^has_(.+)\?$/
+    default = -> { super(method, *args) }
+    Handler.handle!(method, *args, self, &default)
+  end
+  def [](attribute)
+    data[attribute.to_sym] || data[attribute.to_s]
+  end
+  HasHandler = Class.new do
+    def self.handles?(method)
+      method =~ /^has_(.+)\?$/
+    end
+    def self.handle!(method, *args, _caller, &block)
+      method =~ /^has_(.+)\?$/
       suffix = $1
       if self.respond_to?(suffix.to_sym)
-        super(method, *args)
+        block.call
       else
         false
       end
-    elsif method =~ /^(first|last)_(.+)$/
+    end
+  end
+  FirstLastHandler = Class.new do
+    def self.handles?(method)
+      method =~ /^(first|last)_(.+)$/
+    end
+    def self.handle!(method, *args, caller, &default)
+      method =~ /^(first|last)_(.+)$/
       operation = $1
       attribute = $2
-      if self[attribute.pluralize].is_a?(Array)
-        array = data[attribute.pluralize.to_sym] || data[attribute.pluralize.to_s]
+      if caller[attribute.pluralize].is_a?(Array)
+        array = caller.data[attribute.pluralize.to_sym] || caller.data[attribute.pluralize.to_s]
         array.send(operation)
       else
-        super(method, *args)
+        yield
       end
-    elsif method =~ /^(average)_(.+)$/
+    end
+  end
+  AverageHandler = Class.new do
+    def self.handles?(method)
+      method =~ /^(average)_(.+)$/
+    end
+    def self.handle!(method, *args, caller)
+      method =~ /^(average)_(.+)$/
       attribute = $2
-      if self[attribute.pluralize].is_a?(Array)
-        array = self[attribute.pluralize]
-        array.sum * 1.0 / array.count 
+      if caller[attribute.pluralize].is_a?(Array)
+        array = caller[attribute.pluralize]
+        array.sum * 1.0 / array.count
+      else
+        yield
       end
-    elsif method =~ /^(max|min)_(.+)$/
+    end
+  end
+  MinMaxHandler = Class.new do
+    def self.handles?(method)
+      method =~ /^(max|min)_(.+)$/
+    end
+    def self.handle!(method, *args, caller)
+      method =~ /^(max|min)_(.+)$/
       operation = $1
       attribute = $2
-      if self[attribute.pluralize].is_a?(Array)
-        array = self[attribute.pluralize]
+      if caller[attribute.pluralize].is_a?(Array)
+        array = caller[attribute.pluralize]
         array.send(operation)
+      else
+        yield
       end
-    elsif method =~ /^(.+)_(at)$/
+    end
+  end
+  AtHandler = Class.new do
+    def self.handles?(method)
+      method =~ /^(.+)_(at)$/
+    end
+    def self.handle!(method, *args, caller)
+      method =~ /^(.+)_(at)$/
       attribute = $1
-      if self[attribute.pluralize].is_a?(Array)
-        self[attribute.pluralize][args.first.to_i]
+      if caller[attribute.pluralize].is_a?(Array)
+        caller[attribute.pluralize][args.first.to_i]
       else
-        super(method, *args)
+        yield
       end
-    elsif method =~ /^([a-z]+)_(.+)$/
+    end
+  end
+  ArrayHandler = Class.new do
+    def self.handles?(method)
+      method =~ /^([a-z]+)_(.+)$/
+    end
+    def self.handle!(method, *args, caller)
+      method =~ /^([a-z]+)_(.+)$/
       operation = $1
       attribute = $2
-      value = self[attribute]
+      value = caller[attribute]
       if value.is_a?(Array) && value.respond_to?(operation)
         value.send(operation)
       else
-        super(method, *args)
+        yield
       end
-    else
-      super(method, *args)
     end
   end
 
-  def [](attribute)
-    data[attribute.to_sym] || data[attribute.to_s]
+  Handler = Class.new do
+    HANDLERS = [
+      HasHandler,
+      FirstLastHandler,
+      AverageHandler,
+      MinMaxHandler,
+      AtHandler,
+      ArrayHandler
+    ].freeze
+
+    def self.handle!(method, *args, caller, &default)
+      handler = HANDLERS.find { |handler| handler.handles?(method) }
+      if handler.nil?
+        default.call
+      else
+        handler.handle!(method, *args, caller, &default)
+      end
+    end
   end
 end
