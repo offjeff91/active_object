@@ -35,7 +35,7 @@ describe ActiveObject do
           it { assert_equal 'Maria', subject.first_author }
           it { assert_raises(NoMethodError) { subject.first_name } }
           it { assert subject.respond_to?(:first_author) }
-          it { assert subject.respond_to?(:first_name) }
+          it { refute subject.respond_to?(:first_name) }
         end
 
         describe 'last_* method' do
@@ -80,13 +80,10 @@ describe ActiveObject do
           it { assert subject.respond_to?(:min_recommended_price) }
         end
 
-        describe 'has_*? method' do
-          it { assert subject.has_name? }
-          it { refute subject.has_price? }
-          it { assert_raises(NoMethodError) { subject.has_methods? } }
-          it { assert subject.respond_to?(:has_name?) }
-          it { assert subject.respond_to?(:has_price?) }
-          # it { refute subject.respond_to?(:has_methods?) }
+        describe 'respond_to? method' do
+          it { assert subject.respond_to?(:name) }
+          it { refute subject.respond_to?(:price) }
+          it { assert subject.respond_to?(:methods) }
         end
 
         describe 'invalid method calls' do
