@@ -1,4 +1,4 @@
-# ActiveObject
+# ActiveObject [WIP]
 
 A Ruby library that provides dynamic method generation and array operations for hash-like objects.
 
